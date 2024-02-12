@@ -16,15 +16,18 @@ class Receipt():
         # TODO remove assumption that total == sum of item prices is always correct
         self.total = json["total"]
 
-        self.id = uuid4()
-        # self.points = self.calc_total_points()
+        self.id = str(uuid4())
+        # self.points = 0
         self.points = self.calc_total_points()
 
         self.all.append(self)
         center_string_stars(f"CREATED RECEIPT ID {self.id}")
 
     def __repr__(self) -> str:
-        return f"""id:\t{self.id} \ total:\t{self.total} \ points:{self.points}"""
+        return f"""
+        id:\t{self.id} \ 
+        total:\t{self.total} \ 
+        points:{self.points}"""
 
     def confirm_total(self):
         # Make sure that the provided total is the same as the sum of all the items' price
@@ -59,12 +62,17 @@ class Receipt():
     def description_bonus(self):
         # if trimmer  length of shortDescription on item is multiple of 3
         # bonus of price x .2
-        pass
+        import math
+        bonus = 0
+        for item in self.item_list:
+            if len(item["shortDescription"]) % 3 == 0:
+                bonus += math.ceil(float(item["price"]) * 0.2)
+        return bonus
 
     def odd_day_bonus(self):
         # 6 points if the day in the purchase date is odd.
-        pass
+        return 6 if int(self.purchaseDate.split("-")[-1]) % 2 != 0 else 0
 
     def time_of_day_bonus(self):
         # 10 points if the time of purchase is after 2:00pm and before 4:00pm.
-        pass
+        return 10 if int(self.purchaseTime.split(':')[0]) in range(14, 16) else 0
