@@ -8,6 +8,7 @@ flask = "*"
 py-term-helpers = "*"
 ipdb = "*"
 pytest = "*"
+pytest-flask = "*"
 
 [dev-packages]
 

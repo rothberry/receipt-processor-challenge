@@ -1,5 +1,5 @@
 from ipdb import set_trace
-from py_term_helpers import center_string_stars, star_line
+from py_term_helpers import center_string_stars
 from uuid import uuid4
 
 
