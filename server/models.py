@@ -13,11 +13,9 @@ class Receipt():
         self.purchaseTime = json["purchaseTime"]
         self.item_list = json["items"]
 
-        # TODO remove assumption that total == sum of item prices is always correct
-        self.total = json["total"]
+        self.total = self.set_total(json["total"])
 
         self.id = str(uuid4())
-        # self.points = 0
         self.points = self.calc_total_points()
 
         self.all.append(self)
@@ -29,9 +27,19 @@ class Receipt():
         total:\t{self.total} \ 
         points:{self.points}"""
 
-    def confirm_total(self):
+    def set_total(self, given_total):
         # Make sure that the provided total is the same as the sum of all the items' price
-        pass
+        item_total = 0
+        for item in self.item_list:
+            item_total += float(item["price"])
+        if item_total == float(given_total):
+            return given_total
+        else:
+            # * Could go 2 ways if the totals don't match:
+            # * 1. Error out
+            raise AssertionError("Total and calculated item total do not match")
+            # * 2. Overwrite the provided total with the calculated total
+            # return str(item_total)
 
     def calc_total_points(self):
         return self.calc_retailer_points() + self.calc_item_points() + self.totals_bonuses() + self.description_bonus() + self.odd_day_bonus() + self.time_of_day_bonus()
@@ -60,8 +68,8 @@ class Receipt():
         return bonus
 
     def description_bonus(self):
-        # if trimmer  length of shortDescription on item is multiple of 3
-        # bonus of price x .2
+        # if trimmed length of shortDescription on item is multiple of 3
+        # bonus of price x .2 rounded up
         import math
         bonus = 0
         for item in self.item_list:
@@ -74,5 +82,5 @@ class Receipt():
         return 6 if int(self.purchaseDate.split("-")[-1]) % 2 != 0 else 0
 
     def time_of_day_bonus(self):
-        # 10 points if the time of purchase is after 2:00pm and before 4:00pm.
+        # 10 points if the time of purchase is after 14:00 and before 16:00.
         return 10 if int(self.purchaseTime.split(':')[0]) in range(14, 16) else 0

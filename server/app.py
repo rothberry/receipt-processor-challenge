@@ -1,13 +1,10 @@
 from flask import Flask, request, make_response
 from py_term_helpers import top_wrap, center_string_stars
-from ipdb import set_trace
 from models import Receipt
+import json
+from ipdb import set_trace
 
 app = Flask(__name__)
-
-# In leiu of connecting flask to an actual database
-# This list of 'receipt'
-mock_database = []
 
 
 @app.route("/")
@@ -18,10 +15,11 @@ def land():
 @app.route("/receipts/process", methods=["POST"])
 def process_receipt():
     json_data = request.get_json()
-    receipt = Receipt(json_data)
-    # set_trace()
-    # center_string_stars(receipt.id)
-    return make_response({"id": receipt.id})
+    try:
+        receipt = Receipt(json_data)
+        return make_response({"id": receipt.id})
+    except:
+        return make_response({"error": "Failed to create receipt"}, 400)
 
 
 @app.route("/receipts/<string:receipt_id>/points")
@@ -37,7 +35,28 @@ def get_points(receipt_id):
         return make_response({"error": f"Receipt of id {receipt_id} not found"}, 404)
 
 
+@app.route("/receipts")
+def all_receipts():
+    receipts = Receipt.all
+    json_receipts = [{"id": r.id, "points": r.points} for r in receipts]
+    return make_response(json_receipts)
+
+
+def create_receipt_from_file(file_path):
+    file = open(file_path)
+    data = json.load(file)
+    try:
+        Receipt(data)
+        return True
+    except:
+        center_string_stars("failed to create receipt", "X")
+
 if __name__ == '__main__':
     PORT = 5555
     top_wrap(f"FLASK APP RUNNING ON PORT={PORT}")
+
+    center_string_stars("CREATING SEED DATA FROM EXAMPLES")
+    create_receipt_from_file("examples/morning-receipt.json")
+    create_receipt_from_file("examples/simple-receipt.json")
+
     app.run(port=PORT, debug=False)
