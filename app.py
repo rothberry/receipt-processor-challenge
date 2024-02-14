@@ -23,9 +23,9 @@ def create_app(test_config=None):
         json_data = request.get_json()
         try:
             receipt = Receipt(json_data)
-            return make_response({"id": receipt.id})
-        except:
-            return make_response({"error": "Failed to create receipt"}, 400)
+            return make_response({"id": receipt.id}, 201)
+        except Exception as e:
+            return make_response({"errors": e.args}, 400)
 
     @app.route("/receipts/<string:receipt_id>/points")
     def get_points(receipt_id):

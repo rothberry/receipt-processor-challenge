@@ -13,8 +13,10 @@ class Receipt():
         self.purchaseTime = json["purchaseTime"]
         self.item_list = json["items"]
 
+        # * For the total, we can assume that the given total is always correct 
+        # self.total = json["total"]
+        # * or confirm the total based off of the list of items
         self.total = self.set_total(json["total"])
-
         self.id = str(uuid4())
         self.points = self.calc_total_points()
 
@@ -22,16 +24,12 @@ class Receipt():
         center_string_stars(f"CREATED RECEIPT ID {self.id}")
 
     def __repr__(self) -> str:
-        return f"""
-        id:\t{self.id} \ 
-        total:\t{self.total} \ 
-        points:{self.points}"""
+        return f"""||id:\t{self.id} | total:\t{self.total} | points:{self.points}||"""
 
     def set_total(self, given_total):
-        # Make sure that the provided total is the same as the sum of all the items' price
         item_total = 0
         for item in self.item_list:
-            item_total += float(item["price"])
+            item_total = round(item_total + float(item["price"]), 2)
         if item_total == float(given_total):
             return given_total
         else:
@@ -45,8 +43,8 @@ class Receipt():
         return self.calc_retailer_points() + self.calc_item_points() + self.totals_bonuses() + self.description_bonus() + self.odd_day_bonus() + self.time_of_day_bonus()
 
     def calc_retailer_points(self):
-        # calculates the points given for retailer name
-        # 1 point for each alphanumeric character in name
+        # * calculates the points given for retailer name
+        # * 1 point for each alphanumeric character in name
         import re
         alnum_str = re.sub("[^0-9a-zA-Z]+", "", self.retailer)
         return len(alnum_str)
@@ -73,7 +71,7 @@ class Receipt():
         import math
         bonus = 0
         for item in self.item_list:
-            if len(item["shortDescription"]) % 3 == 0:
+            if len(item["shortDescription"].strip()) % 3 == 0:
                 bonus += math.ceil(float(item["price"]) * 0.2)
         return bonus
 
