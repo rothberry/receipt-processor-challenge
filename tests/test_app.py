@@ -2,10 +2,8 @@ import pytest
 from py_term_helpers import top_wrap
 from server.models import Receipt
 from ipdb import set_trace
-from server.helpers import read_json_file
-import json
 
-top_wrap("TESTING ROUTES")
+top_wrap("TESTING")
 
 
 def test_seed_data(seed_data):
@@ -94,3 +92,11 @@ def test_get_receipt(client):
     json_response = res.get_json()
     assert "200" in res.status
     assert json_response["points"] == 31
+
+
+def test_not_found_receipt(client):
+    bad_receipt_id = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    res = client.get(f"/receipts/{bad_receipt_id}/points")
+    json_response = res.get_json()
+    assert "404" in res.status
+    assert json_response["error"]

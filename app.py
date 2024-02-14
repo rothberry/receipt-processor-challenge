@@ -2,18 +2,16 @@ from flask import Flask, request, make_response
 from py_term_helpers import top_wrap, center_string_stars
 from ipdb import set_trace
 from server.models import Receipt
-import json
 
 
 def create_app(test_config=None):
     app = Flask(__name__)
     app.config.from_mapping(SECRET_KEY='dev')
 
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
+    if test_config:
         app.config.from_mapping(test_config)
 
+    # * Defining Routes
     @app.route("/")
     def land():
         return "LANDED"
@@ -29,6 +27,7 @@ def create_app(test_config=None):
 
     @app.route("/receipts/<string:receipt_id>/points")
     def get_points(receipt_id):
+        print("")
         center_string_stars(receipt_id)
         found_receipt = None
         for r in Receipt.all:
@@ -39,6 +38,7 @@ def create_app(test_config=None):
         else:
             return make_response({"error": f"Receipt of id {receipt_id} not found"}, 404)
 
+    # * All Receipt route mostly for debugging
     @app.route("/receipts")
     def all_receipts():
         receipts = Receipt.all
@@ -46,7 +46,7 @@ def create_app(test_config=None):
         return make_response(json_receipts)
 
     return app
-
+# end of create app
 
 if __name__ == '__main__':
     from server.helpers import create_receipt_from_file

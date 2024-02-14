@@ -21,6 +21,7 @@ class Receipt():
         self.points = self.calc_total_points()
 
         self.all.append(self)
+        print("")
         center_string_stars(f"CREATED RECEIPT ID {self.id}")
 
     def __repr__(self) -> str:

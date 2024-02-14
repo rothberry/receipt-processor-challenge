@@ -1,5 +1,4 @@
 import pytest
-from ipdb import set_trace
 from app import create_app
 from server.helpers import create_receipt_from_file, read_json_file
 
