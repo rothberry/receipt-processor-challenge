@@ -1,7 +1,8 @@
-from flask import Flask, request, make_response
+from flask import Flask
 from py_term_helpers import top_wrap, center_string_stars
+from repositories.receipt_repository import ReceiptRepository
+from services.receipt_service import ReceiptService
 from ipdb import set_trace
-from server.models import Receipt
 
 
 def create_app(test_config=None):
@@ -11,50 +12,16 @@ def create_app(test_config=None):
     if test_config:
         app.config.from_mapping(test_config)
 
-    # * Defining Routes
-    @app.route("/")
-    def land():
-        return "LANDED"
-
-    @app.route("/receipts/process", methods=["POST"])
-    def process_receipt():
-        json_data = request.get_json()
-        try:
-            receipt = Receipt(json_data)
-            return make_response({"id": receipt.id}, 201)
-        except Exception as e:
-            return make_response({"errors": e.args}, 400)
-
-    @app.route("/receipts/<string:receipt_id>/points")
-    def get_points(receipt_id):
-        print("")
-        center_string_stars(receipt_id)
-        found_receipt = None
-        for r in Receipt.all:
-            if r.id == receipt_id:
-                found_receipt = r
-        if found_receipt:
-            return make_response({"points": found_receipt.points})
-        else:
-            return make_response({"error": f"Receipt of id {receipt_id} not found"}, 404)
-
-    # * All Receipt route mostly for debugging
-    @app.route("/receipts")
-    def all_receipts():
-        receipts = Receipt.all
-        json_receipts = [{"id": r.id, "points": r.points} for r in receipts]
-        return make_response(json_receipts)
+    
+    from server.routes import flask_app
+    app.register_blueprint(flask_app)
 
     return app
-# end of create app
+
 
 if __name__ == '__main__':
-    from server.helpers import create_receipt_from_file
     PORT = 5555
-    top_wrap(f"FLASK APP RUNNING ON PORT={PORT}")
 
-    center_string_stars("CREATING SEED DATA FROM EXAMPLES")
-    create_receipt_from_file("examples/morning-receipt.json")
-    create_receipt_from_file("examples/simple-receipt.json")
+    top_wrap(f"FLASK APP RUNNING ON PORT={PORT}")
     app = create_app()
     app.run(port=PORT, debug=False)

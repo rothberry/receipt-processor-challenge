@@ -3,9 +3,27 @@ from py_term_helpers import center_string_stars
 from uuid import uuid4
 
 
-class Receipt():
+class ReceiptData():
+    # * ReceiptData will represent the database model
+    # * .all would represent a query to select all from the receipt table
+    # * for this the `.all` will be a dict of {id: points} for O(1) lookup by id
+    all = {}
 
-    all = []
+    def __init__(self, points):
+        self.id = str(uuid4())
+        self.points = points
+        ReceiptData.all[self.id] = self.points
+
+    @classmethod
+    def find_receipt(cls, query_id):
+        try:
+            return cls.all[query_id]
+        except KeyError:
+            return False
+
+    
+
+class Receipt():
 
     def __init__(self, json) -> None:
         self.retailer = json["retailer"]
@@ -13,7 +31,7 @@ class Receipt():
         self.purchaseTime = json["purchaseTime"]
         self.item_list = json["items"]
 
-        # * For the total, we can assume that the given total is always correct 
+        # * For the total, we can assume that the given total is always correct
         # self.total = json["total"]
         # * or confirm the total based off of the list of items
         self.total = self.set_total(json["total"])
@@ -36,7 +54,8 @@ class Receipt():
         else:
             # * Could go 2 ways if the totals don't match:
             # * 1. Error out
-            raise AssertionError("Total and calculated item total do not match")
+            raise AssertionError(
+                "Total and calculated item total do not match")
             # * 2. Overwrite the provided total with the calculated total
             # return str(item_total)
 

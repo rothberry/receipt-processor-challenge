@@ -1,0 +1,10 @@
+{
+    "retailer": "Best Buy",
+    "purchaseDate": "2024-03-10",
+    "purchaseTime": "15:30",
+    "items": [
+        {"shortDescription": "Laptop", "price": "999.99"},
+        {"shortDescription": "Mouse", "price": "49.99"}
+    ],
+    "total": "1049.98"
+}

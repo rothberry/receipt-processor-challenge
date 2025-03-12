@@ -1,6 +1,10 @@
 import pytest
 from app import create_app
-from server.helpers import create_receipt_from_file, read_json_file
+from utils.read_json import read_json_file
+from repositories.receipt_repository import ReceiptRepository
+from services.receipt_service import ReceiptService
+from models.receipt_dto import ReceiptDTO
+from py_term_helpers import *
 
 
 @pytest.fixture
@@ -20,14 +24,20 @@ def runner(app):
 
 
 @pytest.fixture
-def seed_data():
-    create_receipt_from_file("examples/test_target.json")
-    create_receipt_from_file("examples/test_corner.json")
-    return True
+def service():
+    repository = ReceiptRepository()
+    return ReceiptService(repository)
+
+
+@pytest.fixture
+def sample_receipt():
+    return ReceiptDTO(read_json_file("examples/test_bb.json"))
+
 
 @pytest.fixture
 def post_req_data():
     return read_json_file("examples/simple-receipt.json")
+
 
 @pytest.fixture
 def bad_post_req_data():
