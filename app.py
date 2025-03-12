@@ -1,7 +1,5 @@
 from flask import Flask
-from py_term_helpers import top_wrap, center_string_stars
-from repositories.receipt_repository import ReceiptRepository
-from services.receipt_service import ReceiptService
+from py_term_helpers import *
 from ipdb import set_trace
 
 
