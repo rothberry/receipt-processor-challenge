@@ -1,13 +1,14 @@
 import math
 import re
-from py_term_helpers import center_string_stars
+from py_term_helpers import *
 from ipdb import set_trace
 from datetime import datetime
+from models.receipt_entity import ReceiptEntity
 
 
 class PointsCalculator:
     @staticmethod
-    def calculate(receipt):
+    def calculate(receipt: ReceiptEntity):
         return (
             PointsCalculator.calc_retailer_points(receipt.retailer)
             + PointsCalculator.calc_item_points(receipt.item_list)

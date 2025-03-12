@@ -22,11 +22,14 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
+@pytest.fixture
+def repo():
+    return ReceiptRepository()
 
 @pytest.fixture
-def service():
-    repository = ReceiptRepository()
-    return ReceiptService(repository)
+def service(repo):
+    # repository = ReceiptRepository()
+    return ReceiptService(repo)
 
 
 @pytest.fixture

@@ -21,7 +21,6 @@ def create_app(test_config=None):
 
 if __name__ == '__main__':
     PORT = 5555
-
     top_wrap(f"FLASK APP RUNNING ON PORT={PORT}")
     app = create_app()
     app.run(port=PORT, debug=False)
