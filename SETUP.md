@@ -28,7 +28,7 @@ pipenv run pytest -v
 pipenv shell
 # opens the virtual environment so you don't need to start with `pipenv run`
 
-flask run 
+flask run
 
 pytest -v
 # =====
@@ -38,5 +38,6 @@ pytest -v
 # Docker setup
 
 ```shell
-docker pull rothberry/receipt_flask
+    docker pull rothberry/receipt-processor-challenge-server
+    docker run rothberry/receipt-processor-challenge-server
 ```
