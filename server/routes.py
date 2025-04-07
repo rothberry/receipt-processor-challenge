@@ -28,6 +28,8 @@ def create_receipt():
         return make_response({"id": receipt.id}), 201
     except ValueError as e:
         return make_response({"error": str(e)}), 400
+    except ServerError as e:
+        return make_response({"error": str(e)}), 500
 
 
 @flask_app.route("/receipts/<string:receipt_id>/points")

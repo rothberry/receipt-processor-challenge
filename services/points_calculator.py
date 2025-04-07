@@ -7,10 +7,16 @@ from models.receipt_entity import ReceiptEntity
 
 
 class PointsCalculator:
-    @staticmethod
-    def calculate(receipt: ReceiptEntity):
+
+    def __init__(self, domains_dict: dict):
+       self.domains_dict = {
+           "retailer_domain": "http//...."
+       } 
+
+    # @staticmethod
+    def calculate(self, receipt: ReceiptEntity):
         return (
-            PointsCalculator.calc_retailer_points(receipt.retailer)
+            PointsCalculator.calc_retailer_points(receipt.retailer, self.domains_dict["retailer_dmoin"])
             + PointsCalculator.calc_item_points(receipt.item_list)
             + PointsCalculator.totals_bonuses(receipt.total)
             + PointsCalculator.description_bonus(receipt.item_list)
@@ -18,8 +24,23 @@ class PointsCalculator:
             + PointsCalculator.time_of_day_bonus(receipt.purchase_time)
         )
 
+    # network req to /retailer-service
+    # req: retailer_name: str => /service
+    # req: the points for the reatiler-string
     @staticmethod
-    def calc_retailer_points(retailer: str):
+    def calc_retailer_points(retailer: str, domain_name: str):
+        """ 
+        post-req to `domain-name` with the body: {retailer: retailer-str}
+
+        # server offline...
+        try: 
+            .....
+        except Error:
+            # if there is an error
+            
+
+
+        """
         return len(re.sub("[^0-9a-zA-Z]+", "", retailer))
 
     @staticmethod
